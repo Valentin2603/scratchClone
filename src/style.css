@@ -1,0 +1,140 @@
+.variants {
+    background: #D9B08C;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    width: 220px;
+    height: 600px;
+
+    text-align: center;
+    margin-top: 0;
+    padding-top: 20px;
+    font-size: 25px;
+    overflow: auto;
+    position: sticky;
+
+
+}
+
+.pole-raboti {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    height: 620px;
+    width: 90%;
+    background: #2C3531;
+    background-size: cover;
+    margin-top: 0;
+    text-align: center;
+    font-size: 30px;
+    color: #a7a5a8;
+    flex: 1;
+}
+
+.container {
+    display: flex;
+    gap: 0;
+    margin-top: -20px;
+}
+
+.container-button {
+    background-color: #D9B08C;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    width: 180px;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    border: 2px solid black;
+    flex: 1;
+
+
+}
+
+.lipstik {
+    list-style-type: none;
+    padding-left: 0;
+
+}
+
+.container-button:hover {
+    border: 2px solid black;
+    background-color: #FFCB9A;
+    transition: background-color 0.3s ease;
+}
+
+.zag {
+    border-bottom: 2px solid black;
+    width: 100%;
+    height: 13%;
+    position: sticky;
+    top: 0;
+    background: #D9B08C;
+    z-index: 1;
+    padding: 10px 0;
+    margin-top: 0;
+    border-radius: 15px;
+    margin-bottom: 25px;
+
+
+}
+
+img {
+    border-radius: 600px;
+    height: 44px;
+    margin-left: 20px;
+    margin-top: 4px;
+}
+
+.wordlogo {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 0;
+
+}
+
+.head {
+    background-color: #D1E8E2;
+    margin: 0;
+    padding: 0;
+
+}
+
+.zaglav {
+    height: 50px;
+    background-color: #D1E8E2;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+
+    border: 2px solid black;
+    margin-top: 0;
+
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+    background: whitesmoke;
+}
+
+.window-deystviy {
+    border-bottom: 2px solid black;
+    padding-bottom: 20px;
+    font-size: 35px;
+    border-radius: 20px;
+    height: 65px;
+}
+
+.terminal {
+    background-color: #116466;
+    height: 620px;
+    width: 150px;
+    border-top-right-radius: 15px;
+}
+
+.nameTerminal {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    font-size: 25px;
+    margin-top: 10px;
+
+}
