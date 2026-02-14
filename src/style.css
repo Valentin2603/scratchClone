@@ -25,6 +25,7 @@
     font-size: 30px;
     color: #a7a5a8;
     flex: 1;
+    overflow: auto;
 }
 
 .container {

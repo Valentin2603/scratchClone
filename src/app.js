@@ -1,17 +1,19 @@
-const workspace = document.getElementById("workspace")
-const palette = document.getElementById("palette")
+const workspace = document.querySelector(".pole-raboti")
+const blocks = document.querySelectorAll(".container-button")
+const terminal = document.querySelector(".terminal");
+
 
 let workspaceBlocks = [];
 
-palette.addEventListener("click", function(event) {
-    const clicked = event.target;
+blocks.forEach (block => {
+    block.addEventListener("click", function(event) {
+        const clicked = event.target;
+        console.log("Клик по блоку");
 
-    if (clicked.classList.contains("block")) {
-        const newBlock = document.createElement("div");
-        newBlock.textContent = clicked.textContent;
-        newBlock.className = "block";
-        newBlock.dataset.type = clicked.dataset.type;
-
+        
+        const newBlock = block.cloneNode(true);
+        newBlock.classList.add("workspace-block");
+    
         workspace.appendChild(newBlock);
 
         workspaceBlocks.push({
@@ -20,6 +22,6 @@ palette.addEventListener("click", function(event) {
         });
 
         console.log(workspaceBlocks);
-    }
-
+        
+    })
 })
