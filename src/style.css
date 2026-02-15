@@ -60,7 +60,7 @@
 .zag {
     border-bottom: 2px solid black;
     width: 100%;
-    height: 13%;
+    height: 50px;
     position: sticky;
     top: 0;
     background: #D9B08C;
@@ -69,6 +69,7 @@
     margin-top: 0;
     border-radius: 15px;
     margin-bottom: 25px;
+    font-size: 25px;
 
 
 }
@@ -119,12 +120,13 @@ body {
 
 .window-deystviy {
     border-bottom: 2px solid black;
-    font-size: 35px;
+    font-size: 25px;
     border-radius: 20px;
     height: 65px;
     position: sticky;
     top: 0;
     background: #2C3531;
+    margin-top: 5px;
 
 
 }
@@ -138,13 +140,14 @@ body {
 
 .nameTerminal {
     font-family: Comic Sans MS, Comic Sans, cursive;
-    font-size: 35px;
-    margin-top: 10px;
+    font-size: 25px;
+    margin-top: 5px;
     text-align: center;
     border-bottom: 2px solid black;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
-    height: 90px;
+    height: 65px;
+
 
 }
 
