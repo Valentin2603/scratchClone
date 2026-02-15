@@ -2,7 +2,7 @@
     background: #D9B08C;
     font-family: Comic Sans MS, Comic Sans, cursive;
     width: 320px;
-    height: 600px;
+    height: 620px;
     text-align: center;
     margin-top: 0;
     padding-top: 0;
@@ -141,6 +141,10 @@ body {
     font-size: 35px;
     margin-top: 10px;
     text-align: center;
+    border-bottom: 2px solid black;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height: 90px;
 
 }
 
