@@ -1,12 +1,11 @@
 .variants {
     background: #D9B08C;
     font-family: Comic Sans MS, Comic Sans, cursive;
-    width: 220px;
-    height: 600px;
-
+    width: 320px;
+    height: 620px;
     text-align: center;
     margin-top: 0;
-    padding-top: 20px;
+    padding-top: 0;
     font-size: 25px;
     overflow: auto;
     position: sticky;
@@ -17,15 +16,17 @@
 .pole-raboti {
     font-family: Comic Sans MS, Comic Sans, cursive;
     height: 620px;
-    width: 90%;
+    width: 360px;
     background: #2C3531;
-    background-size: cover;
     margin-top: 0;
     text-align: center;
-    font-size: 30px;
+    font-size: 25px;
     color: #a7a5a8;
     flex: 1;
     overflow: auto;
+    position: sticky;
+
+
 }
 
 .container {
@@ -37,13 +38,11 @@
 .container-button {
     background-color: #D9B08C;
     font-family: Comic Sans MS, Comic Sans, cursive;
-    width: 180px;
+    width: 240px;
     border-radius: 10px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     border: 2px solid black;
     flex: 1;
-
-
 }
 
 .lipstik {
@@ -61,7 +60,7 @@
 .zag {
     border-bottom: 2px solid black;
     width: 100%;
-    height: 13%;
+    height: 50px;
     position: sticky;
     top: 0;
     background: #D9B08C;
@@ -70,6 +69,7 @@
     margin-top: 0;
     border-radius: 15px;
     margin-bottom: 25px;
+    font-size: 25px;
 
 
 }
@@ -120,23 +120,34 @@ body {
 
 .window-deystviy {
     border-bottom: 2px solid black;
-    padding-bottom: 20px;
-    font-size: 35px;
+    font-size: 25px;
     border-radius: 20px;
     height: 65px;
+    position: sticky;
+    top: 0;
+    background: #2C3531;
+    margin-top: 5px;
+
+
 }
 
 .terminal {
     background-color: #116466;
     height: 620px;
-    width: 150px;
+    width: 550px;
     border-top-right-radius: 15px;
 }
 
 .nameTerminal {
     font-family: Comic Sans MS, Comic Sans, cursive;
     font-size: 25px;
-    margin-top: 10px;
+    margin-top: 5px;
+    text-align: center;
+    border-bottom: 2px solid black;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height: 65px;
+
 
 }
 
