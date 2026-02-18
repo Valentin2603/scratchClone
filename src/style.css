@@ -1,0 +1,162 @@
+.variants {
+    background: #D9B08C;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    width: 320px;
+    height: 620px;
+    text-align: center;
+    margin-top: 0;
+    padding-top: 0;
+    font-size: 25px;
+    overflow: auto;
+    position: sticky;
+
+
+}
+
+.pole-raboti {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    height: 620px;
+    width: 360px;
+    background: #2C3531;
+    margin-top: 0;
+    text-align: center;
+    font-size: 25px;
+    color: #a7a5a8;
+    flex: 1;
+    overflow: auto;
+    position: sticky;
+
+
+}
+
+.container {
+    display: flex;
+    gap: 0;
+    margin-top: -20px;
+}
+
+.container-button {
+    background-color: #D9B08C;
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    width: 240px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 2px solid black;
+    flex: 1;
+}
+
+.lipstik {
+    list-style-type: none;
+    padding-left: 0;
+
+}
+
+.container-button:hover {
+    border: 2px solid black;
+    background-color: #FFCB9A;
+    transition: background-color 0.3s ease;
+}
+
+.zag {
+    border-bottom: 2px solid black;
+    width: 100%;
+    height: 50px;
+    position: sticky;
+    top: 0;
+    background: #D9B08C;
+    z-index: 1;
+    padding: 10px 0;
+    margin-top: 0;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    font-size: 25px;
+
+
+}
+
+img {
+    border-radius: 600px;
+    height: 44px;
+    margin-left: 20px;
+    margin-top: 4px;
+}
+
+.wordlogo {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 0;
+
+}
+
+.head {
+    background-color: #D1E8E2;
+    margin: 0;
+    padding: 0;
+
+}
+
+.zaglav {
+    height: 50px;
+    background-color: #D1E8E2;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+
+    border: 2px solid black;
+    margin-top: 0;
+
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+
+}
+
+body {
+    background: whitesmoke;
+}
+
+.window-deystviy {
+    border-bottom: 2px solid black;
+    font-size: 25px;
+    border-radius: 20px;
+    height: 65px;
+    position: sticky;
+    top: 0;
+    background: #2C3531;
+    margin-top: 5px;
+
+
+}
+
+.terminal {
+    background-color: #116466;
+    height: 620px;
+    width: 550px;
+    border-top-right-radius: 15px;
+}
+
+.nameTerminal {
+    font-family: Comic Sans MS, Comic Sans, cursive;
+    font-size: 25px;
+    margin-top: 5px;
+    text-align: center;
+    border-bottom: 2px solid black;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    height: 65px;
+
+
+}
+
+
+/*
+надо сделать так чтобы блоки становились красиво вертикально и попробуй сделать основу под drag & drop, 
+вывод пошире и варианты команд,
+окно действий, чтобы оставалось на месте при прокруте рабочего протсранства
+по тз посмотреть какие нужны блоки и их добавить
+у каждого блока свой class data-type с нормальными названиями
+
+/*
