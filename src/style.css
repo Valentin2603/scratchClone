@@ -25,6 +25,33 @@ body {
     border-radius: 50%;
 }
 
+.workspace-block{
+	background:#334155;
+	padding:10px;
+	border-radius:12px;
+	margin-bottom:10px;
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	gap:10px;
+}
+
+.block-input{
+	background:#111827;
+	border:1px solid rgba(255,255,255,0.2);
+	color:white;
+	border-radius:8px;
+	padding:6px 8px;
+	outline:none;
+	min-width:120px;
+}
+
+.delete-btn{
+	background:transparent;
+	border:none;
+	cursor:pointer;
+	font-size:18px;
+}
 .head {
     text-align: center;
     padding: 15px 0;
