@@ -188,3 +188,13 @@ body {
     font-size: 14px;
     overflow-y: auto;
 }
+
+
+.if-body .workspace-block {
+	margin-left: 20px;
+}
+
+
+.workspace-block[data-type="IF"] {
+	border: 2px solid #000000;
+}

@@ -162,8 +162,27 @@ function rebuildWorkspaceBlocks() {
 			obj.data.variable = b.dataset.variable || "";
 			obj.data.value = b.dataset.value || "";
 		}
-		else if (b.dataset.type === "IF") {
-			obj.data.condition = b.dataset.condition || "";
+		else if (type === "IF") {
+			newBlock.innerHTML = `
+				<div class="if-header">
+					IF <input class="block-input" placeholder="условие">
+				</div>
+				<div class="if-body"></div>
+				<div class="else-header">ELSE</div>
+				<div class="else-body"></div>
+			`;
+
+			const conditionInput = newBlock.querySelector(".block-input");
+
+			conditionInput.addEventListener("input", () => {
+				newBlock.dataset.condition = conditionInput.value;
+			});
+
+			const ifBody = newBlock.querySelector(".if-body");
+			const elseBody = newBlock.querySelector(".else-body");
+
+			enableInnerDrop(ifBody);
+			enableInnerDrop(elseBody);
 		}
 
 		workspaceBlocks.push(obj);
