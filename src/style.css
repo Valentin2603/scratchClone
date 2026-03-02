@@ -191,7 +191,22 @@ body {
 
 
 .if-body .workspace-block {
-	margin-left: 20px;
+	margin-left: 10px;
+}
+
+.if-body, .else-body {
+	min-height: 10px;
+    padding-left: 70px;
+    padding-top: 40px;
+	border-radius: 10px;
+	background: rgba(0,0,0,0.15);
+	margin-top: 4px;
+}
+
+.else-header {
+	margin-top: 8px;
+	opacity: 0.8;
+	font-size: 12px;
 }
 
 

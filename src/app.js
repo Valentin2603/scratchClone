@@ -7,6 +7,38 @@ const terminalOutput = document.querySelector(".terminal-output");
 let workspaceBlocks = [];
 let draggedBlock = null;
 
+// вложенные зоны drop (IF/ELSE)
+function enableInnerDrop(container) {
+	if (!container) return;
+
+	container.addEventListener("dragover", (e) => {
+		e.preventDefault();
+	});
+
+	container.addEventListener("drop", (e) => {
+		e.preventDefault();
+
+		const mode = e.dataTransfer.getData("mode");
+
+		if (mode === "copy") {
+			const type = e.dataTransfer.getData("type");
+			if (!type) return;
+			const newBlock = createWorkspaceBlock(type);
+			container.appendChild(newBlock);
+			rebuildWorkspaceBlocks();
+			return;
+		}
+
+		if (mode === "move") {
+			if (!draggedBlock) return;
+			container.appendChild(draggedBlock);
+			draggedBlock = null;
+			rebuildWorkspaceBlocks();
+			return;
+		}
+	});
+}
+
 // копируем в рабочую область
 blocks.forEach((btn) => {
 	btn.addEventListener("dragstart", (e) => {
@@ -98,7 +130,17 @@ function createWorkspaceBlock(type) {
 		newBlock.innerHTML = `<input class="block-input" placeholder="переменная"> = <input class="block-input" placeholder="значение">`;
 	}
 	else if (type === "IF") {
-		newBlock.innerHTML = `IF <input class="block-input" placeholder="условие">`;
+		newBlock.innerHTML = `
+			<div class="if-header">
+				IF <input class="block-input" placeholder="условие (пример: x > 0)">
+			</div>
+			<div class="if-body droppable"></div>
+			<div class="else-header">ELSE</div>
+			<div class="else-body droppable"></div>
+		`;
+
+		enableInnerDrop(newBlock.querySelector(".if-body"));
+		enableInnerDrop(newBlock.querySelector(".else-body"));
 	}
 
 	newBlock.appendChild(deleteBtn);
@@ -143,50 +185,36 @@ function createWorkspaceBlock(type) {
 	return newBlock;
 }
 
-// Пересобираем массив в DOMe
+// Пересобираем массив из DOM (поддерживает вложенные блоки в IF/ELSE)
+function readBlock(b) {
+	const obj = {
+		type: b.dataset.type,
+		data: {}
+	};
+
+	if (b.dataset.type === "new_value") {
+		obj.data.variables = b.dataset.variables || "";
+	}
+	else if (b.dataset.type === "assign") {
+		obj.data.variable = b.dataset.variable || "";
+		obj.data.value = b.dataset.value || "";
+	}
+	else if (b.dataset.type === "IF") {
+		obj.data.condition = b.dataset.condition || "";
+		const ifBody = b.querySelector(".if-body");
+		const elseBody = b.querySelector(".else-body");
+		const ifBlocks = ifBody ? ifBody.querySelectorAll(":scope > .workspace-block") : [];
+		const elseBlocks = elseBody ? elseBody.querySelectorAll(":scope > .workspace-block") : [];
+		obj.then = Array.from(ifBlocks).map(readBlock);
+		obj.else = Array.from(elseBlocks).map(readBlock);
+	}
+
+	return obj;
+}
+
 function rebuildWorkspaceBlocks() {
-	workspaceBlocks = [];
-
-	const allBlocks = workspace.querySelectorAll(".workspace-block");
-
-	allBlocks.forEach((b) => {
-		const obj = {
-			type: b.dataset.type,
-			data: {}
-		};
-
-		if (b.dataset.type === "new_value") {
-			obj.data.variables = b.dataset.variables || "";
-		}
-		else if (b.dataset.type === "assign") {
-			obj.data.variable = b.dataset.variable || "";
-			obj.data.value = b.dataset.value || "";
-		}
-		else if (type === "IF") {
-			newBlock.innerHTML = `
-				<div class="if-header">
-					IF <input class="block-input" placeholder="условие">
-				</div>
-				<div class="if-body"></div>
-				<div class="else-header">ELSE</div>
-				<div class="else-body"></div>
-			`;
-
-			const conditionInput = newBlock.querySelector(".block-input");
-
-			conditionInput.addEventListener("input", () => {
-				newBlock.dataset.condition = conditionInput.value;
-			});
-
-			const ifBody = newBlock.querySelector(".if-body");
-			const elseBody = newBlock.querySelector(".else-body");
-
-			enableInnerDrop(ifBody);
-			enableInnerDrop(elseBody);
-		}
-
-		workspaceBlocks.push(obj);
-	});
+	const topBlocks = workspace.querySelectorAll(":scope > .workspace-block");
+	workspaceBlocks = Array.from(topBlocks).map(readBlock);
 }
 
 
@@ -197,59 +225,118 @@ runButton.addEventListener("click", () => {
 	// очищаем терминал перед выводом
 	terminalOutput.innerHTML = "";
 
-	// выводим красиво
-	workspaceBlocks.forEach((block, index) => {
-
+	const vm = new Interpreter((s) => {
 		const line = document.createElement("div");
-
-		if (block.type === "new_value") {
-			line.textContent = `Объявить: ${block.data.variables}`;
-		}
-		else if (block.type === "assign") {
-			line.textContent = `${block.data.variable} = ${block.data.value}`;
-		}
-		else if (block.type === "IF") {
-			line.textContent = `IF (${block.data.condition})`;
-
-			// вывод вложенных блоков
-			block.children.forEach((child) => {
-				const childLine = document.createElement("div");
-				childLine.style.marginLeft = "20px";
-				childLine.textContent = `→ ${child.type}`;
-				terminalOutput.appendChild(childLine);
-			});
-		}
-
+		line.textContent = String(s);
 		terminalOutput.appendChild(line);
 	});
+
+	try {
+		vm.run(workspaceBlocks);
+		vm.dump();
+	} catch (e) {
+		const line = document.createElement("div");
+		line.textContent = "Ошибка: " + e.message;
+		terminalOutput.appendChild(line);
+	}
 
 });
 
 class Interpreter  {
-	constructor () {
-		this.bloks = document.querySelector("pole-raboti").querySelectorAll("workspace-block");
+	constructor (printFn) {
 		this.variables = new Map();
-
+		this.print = printFn || ((s) => console.log(s));
 	}
 
-	runAlgorithm () {
-		for (block of blocks) {
-			input = block.querySelector("input");
-			select = block.querySelector("select");
+	run(program) {
+		for (const block of program) {
+			this.exec(block);
+		}
+	}
 
-			switch (block.type) {
-				case "assign":
-					this.assignment(select.value, input.value);
+	exec(block) {
+		switch (block.type) {
+			case "new_value":
+				this.declare(block.data.variables);
+				break;
+			case "assign":
+				this.assign(block.data.variable, block.data.value);
+				break;
+			case "IF":
+				this.execIf(block);
+				break;
+			default:
+				throw new Error("Неизвестный блок: " + block.type);
+		}
+	}
+
+	declare(csv) {
+		const names = String(csv)
+			.split(",")
+			.map((s) => s.trim())
+			.filter((s) => s.length > 0);
+
+		for (const name of names) {
+			if (!/^[A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*$/.test(name)) {
+				throw new Error("Некорректное имя переменной: " + name);
+			}
+			if (!this.variables.has(name)) {
+				this.variables.set(name, 0);
 			}
 		}
 	}
 
-	assigment(name, exp) {
+	assign(name, expr) {
+		name = String(name).trim();
 		if (!this.variables.has(name)) {
-			console.log('no such variable');
+			throw new Error("Переменная не объявлена: " + name);
 		}
+		const value = RNP.calculate(String(expr), (varName) => {
+			if (!this.variables.has(varName)) return undefined;
+			return this.variables.get(varName);
+		});
+		this.variables.set(name, value);
+	}
 
-		this.variables.set(name, RNP.calculate(exp));
+	execIf(block) {
+		const cond = String(block.data.condition || "").trim();
+		if (cond.length === 0) throw new Error("Пустое условие IF");
+		const ok = this.evalCondition(cond);
+		if (ok) {
+			if (block.then) this.run(block.then);
+		} else {
+			if (block.else) this.run(block.else);
+		}
+	}
+
+	evalCondition(cond) {
+		const m = cond.match(/^\s*(.+?)\s*(>=|<=|!=|=|>|<)\s*(.+?)\s*$/);
+		if (!m) throw new Error("Некорректное условие: " + cond);
+		const left = RNP.calculate(m[1], (n) => {
+			if (!this.variables.has(n)) return undefined;
+			return this.variables.get(n);
+		});
+		const right = RNP.calculate(m[3], (n) => {
+			if (!this.variables.has(n)) return undefined;
+			return this.variables.get(n);
+		});
+		const op = m[2];
+		switch (op) {
+			case ">": return left > right;
+			case "<": return left < right;
+			case "=": return left === right;
+			case "!=": return left !== right;
+			case ">=": return left >= right;
+			case "<=": return left <= right;
+		}
+		return false;
+	}
+
+	dump() {
+		this.print("\nПеременные:");
+		for (const [k, v] of this.variables.entries()) {
+			this.print(k + " = " + v);
+		}
 	}
 }
 
@@ -264,16 +351,24 @@ class RNP {
 		'^' : 5,
 	}
 
-	static calculate (expression) {
+	static calculate (expression, resolver) {
 		let tokens = this.shunting_yard(this.tokenize(expression));
 		let stack = [];
 		for (const token of tokens) {
 			if (!this.isOperator(token)) {
-				stack.push(parseInt(token));
+				if (/^-?\d+$/.test(token)) {
+					stack.push(parseInt(token));
+				}
+				else {
+					if (!resolver) throw new Error("Неизвестный токен: " + token);
+					const v = resolver(token);
+					if (v === undefined) throw new Error("Переменная не объявлена: " + token);
+					stack.push(parseInt(v));
+				}
 			}
 			else {
 				const a = stack.pop();
-				const b = stack.pop();
+				const b = (token === 'u-') ? 0 : stack.pop();
 				switch (token) {
 					case '+':
 						stack.push(a + b);
@@ -410,13 +505,10 @@ class RNP {
 	}
 
 	static isOperator(char) {
-		return ['+', '-', '*', '/', '%', '^'].includes(char);
+		return ['+', '-', '*', '/', '%', '^', 'u-'].includes(char);
 	}
 
 	static isDigit(char) {
 		return /^[0-9]$/.test(char);
 	}
 }
-console.log(RNP.tokenize('123 + 1 + 2'));
-console.log(RNP.shunting_yard(RNP.tokenize('123 + 1 + 2')));
-console.log(RNP.calculate('123 + 1 + 2'));
