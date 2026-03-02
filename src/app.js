@@ -224,3 +224,199 @@ runButton.addEventListener("click", () => {
 	});
 
 });
+
+class Interpreter  {
+	constructor () {
+		this.bloks = document.querySelector("pole-raboti").querySelectorAll("workspace-block");
+		this.variables = new Map();
+
+	}
+
+	runAlgorithm () {
+		for (block of blocks) {
+			input = block.querySelector("input");
+			select = block.querySelector("select");
+
+			switch (block.type) {
+				case "assign":
+					this.assignment(select.value, input.value);
+			}
+		}
+	}
+
+	assigment(name, exp) {
+		if (!this.variables.has(name)) {
+			console.log('no such variable');
+		}
+
+		this.variables.set(name, RNP.calculate(exp));
+	}
+}
+
+class RNP {
+	static ops_priority = {
+		'+' : 2,
+		'-' : 2,
+		'%' : 3,
+		'*' : 3,
+		'/' : 3,
+		'u-': 4,
+		'^' : 5,
+	}
+
+	static calculate (expression) {
+		let tokens = this.shunting_yard(this.tokenize(expression));
+		let stack = [];
+		for (const token of tokens) {
+			if (!this.isOperator(token)) {
+				stack.push(parseInt(token));
+			}
+			else {
+				const a = stack.pop();
+				const b = stack.pop();
+				switch (token) {
+					case '+':
+						stack.push(a + b);
+						break;
+					case '-':
+						stack.push(b - a);
+						break;
+					case '*':
+						stack.push(b * a);
+						break;
+					case '/':
+						stack.push(parseInt(b / a));
+						break;
+					case '^':
+						stack.push(b ** a);
+						break;
+					case '%':
+						stack.push(b % a);
+						break;
+					case 'u-':
+						stack.push(-a);
+						break;
+				}
+			}
+		}
+
+		return stack.pop();
+	}
+
+	static shunting_yard (tokens) {
+		let queue = [];
+		let stack = [];
+
+		for (let i = 0; i < tokens.length; ++i) {
+			let token = tokens[i];
+			if (token == '-' && (i == 0 || (this.isOperator(tokens[i - 1]) || tokens[i -  1] === '('))) {
+				token = 'u-';
+			}
+			if (!(this.isOperator(token) || token === ')' || token === '(')) {
+				queue.push(token);
+			}
+			else if (token === '(') {
+				stack.push(token);
+			}
+			else if (token === ')') {
+				while (stack.length != 0 && stack.at(-1) != '(') {
+					queue.push(stack.pop());
+				}
+
+				if (stack.length === 0) {
+					console.log('error');
+					return;
+				}
+				stack.pop();
+			}
+			else {
+				while (stack.length != 0 && stack.at(-1) != '('
+					&& (this.ops_priority[stack.at(-1)] > this.ops_priority[token]
+					|| (this.ops_priority[stack.at(-1)] === this.ops_priority[token] 
+					&& this.isLeftAssociative(token)))) {
+					queue.push(stack.pop());
+				}
+
+				stack.push(token);
+			}
+		}
+		while (stack.length != 0) {
+			if (stack.at(-1) === '(') {
+				console.log('error');
+				return;
+			}
+			queue.push(stack.pop());
+		}
+
+		return queue;
+	}
+
+	static tokenize(exp) {
+		let tokens = [];
+
+		let buffer = '';
+		let buffer_type = '';
+
+		for (const char of exp) {
+			if (char === ' ') continue;
+			if (buffer.length === 0) {
+				if (this.isDigit(char)) {
+					buffer_type = 'number';
+				}
+				else if (this.isLetter(char)) {
+					buffer_type = 'variable';
+				}
+			}
+			if (this.isDigit(char)) {
+				buffer += char;
+			}
+			else if (this.isVariableSymbol(char)) {
+				if (buffer_type == 'number') {
+					console.log('error');
+					return;
+				}
+				buffer += char;
+			}
+			else if (this.isOperator(char) || char == '(' || char == ')') {
+				if (buffer != '') {
+					tokens.push(buffer);
+					buffer = '';
+				}
+				tokens.push(char);
+			}
+			else {
+				console.log('error');
+				return;
+			}
+		}
+		if (buffer != '') {
+			tokens.push(buffer);
+			buffer = '';
+		}
+
+		return tokens;
+	}
+
+	static isLeftAssociative(token) {
+		return token !== '^' && token !== 'u-';
+	}
+
+	static isLetter(char) {
+		return /^[A-Za-zА-Яа-яЁё]$/.test(char);
+	}
+
+	static isVariableSymbol(char) {
+		return /^[A-Za-zА-Яа-яЁё_0-9]$/.test(char);
+	}
+
+	static isOperator(char) {
+		return ['+', '-', '*', '/', '%', '^'].includes(char);
+	}
+
+	static isDigit(char) {
+		return /^[0-9]$/.test(char);
+	}
+}
+console.log(RNP.tokenize('123 + 1 + 2'));
+console.log(RNP.shunting_yard(RNP.tokenize('123 + 1 + 2')));
+console.log(RNP.calculate('123 + 1 + 2'));
