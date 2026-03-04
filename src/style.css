@@ -1,162 +1,215 @@
-.variants {
-    background: #D9B08C;
-    font-family: Comic Sans MS, Comic Sans, cursive;
-    width: 320px;
-    height: 620px;
-    text-align: center;
-    margin-top: 0;
-    padding-top: 0;
-    font-size: 25px;
-    overflow: auto;
-    position: sticky;
 
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.pole-raboti {
-    font-family: Comic Sans MS, Comic Sans, cursive;
-    height: 620px;
-    width: 360px;
-    background: #2C3531;
-    margin-top: 0;
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f1f2e, #2b2b40);
+    color: #fff;
+}
+
+.zaglav {
+    height: 60px;
+    background: #111827;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.logo {
+    height: 40px;
+    border-radius: 50%;
+}
+
+.workspace-block{
+	background:#334155;
+	padding:10px;
+	border-radius:12px;
+	margin-bottom:10px;
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	gap:10px;
+}
+
+.block-input{
+	background:#111827;
+	border:1px solid rgba(255,255,255,0.2);
+	color:white;
+	border-radius:8px;
+	padding:6px 8px;
+	outline:none;
+	min-width:120px;
+}
+
+.delete-btn{
+	background:transparent;
+	border:none;
+	cursor:pointer;
+	font-size:18px;
+}
+.head {
     text-align: center;
-    font-size: 25px;
-    color: #a7a5a8;
-    flex: 1;
-    overflow: auto;
-    position: sticky;
+    padding: 15px 0;
+    background: #1f2937;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
+.wordlogo {
+    font-weight: 600;
+    letter-spacing: 1px;
+}
 
+.wordlogo:nth-child(2) {
+    font-size: 14px;
+    opacity: 0.6;
 }
 
 .container {
     display: flex;
-    gap: 0;
-    margin-top: -20px;
+    gap: 20px;
+    padding: 20px;
+    height: calc(100vh - 150px);
 }
 
-.container-button {
-    background-color: #D9B08C;
-    font-family: Comic Sans MS, Comic Sans, cursive;
-    width: 240px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    border: 2px solid black;
-    flex: 1;
-}
-
-.lipstik {
-    list-style-type: none;
-    padding-left: 0;
-
-}
-
-.container-button:hover {
-    border: 2px solid black;
-    background-color: #FFCB9A;
-    transition: background-color 0.3s ease;
+.variants {
+    width: 300px;
+    background: #111827;
+    border-radius: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .zag {
-    border-bottom: 2px solid black;
-    width: 100%;
-    height: 50px;
-    position: sticky;
-    top: 0;
-    background: #D9B08C;
-    z-index: 1;
-    padding: 10px 0;
-    margin-top: 0;
-    border-radius: 15px;
-    margin-bottom: 25px;
-    font-size: 25px;
-
-
-}
-
-img {
-    border-radius: 600px;
-    height: 44px;
-    margin-left: 20px;
-    margin-top: 4px;
-}
-
-.wordlogo {
-    font-family: Comic Sans MS, Comic Sans, cursive;
+    font-size: 20px;
+    margin-bottom: 20px;
     text-align: center;
-    padding: 10px 0;
-    margin-top: 0;
-
+    font-weight: 600;
 }
 
-.head {
-    background-color: #D1E8E2;
-    margin: 0;
-    padding: 0;
-
+.lipstik {
+    list-style: none;
 }
 
-.zaglav {
-    height: 50px;
-    background-color: #D1E8E2;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 0;
-
-    border: 2px solid black;
-    margin-top: 0;
-
+.container-button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #2563eb, #1d4ed8);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-
+.container-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(145deg, #3b82f6, #2563eb);
 }
 
-body {
-    background: whitesmoke;
+.pole-raboti {
+    flex: 1;
+    background: #1e293b;
+    border-radius: 20px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .window-deystviy {
-    border-bottom: 2px solid black;
-    font-size: 25px;
-    border-radius: 20px;
-    height: 65px;
-    position: sticky;
-    top: 0;
-    background: #2C3531;
-    margin-top: 5px;
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+}
 
 
+.terminal::after {
+    content: ">";
+    color: #22c55e;
+    font-family: monospace;
+    font-size: 16px;
+    opacity: 0.7;
 }
 
 .terminal {
-    background-color: #116466;
-    height: 620px;
-    width: 550px;
-    border-top-right-radius: 15px;
+    width: 400px;
+    background: #0f172a;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
 }
 
 .nameTerminal {
-    font-family: Comic Sans MS, Comic Sans, cursive;
-    font-size: 25px;
-    margin-top: 5px;
-    text-align: center;
-    border-bottom: 2px solid black;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-    height: 65px;
+    font-size: 18px;
+    font-weight: 600;
+}
 
+#runButton {
+    background: linear-gradient(145deg, #22c55e, #16a34a);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
 
+#runButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.terminal-output {
+    flex: 1;
+    background: #111827;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    overflow-y: auto;
 }
 
 
-/*
-надо сделать так чтобы блоки становились красиво вертикально и попробуй сделать основу под drag & drop, 
-вывод пошире и варианты команд,
-окно действий, чтобы оставалось на месте при прокруте рабочего протсранства
-по тз посмотреть какие нужны блоки и их добавить
-у каждого блока свой class data-type с нормальными названиями
+.if-body .workspace-block {
+	margin-left: 10px;
+}
 
-/*
+.if-body, .else-body {
+	min-height: 10px;
+    padding-left: 70px;
+    padding-top: 40px;
+	border-radius: 10px;
+	background: rgba(0,0,0,0.15);
+	margin-top: 4px;
+}
+
+.else-header {
+	margin-top: 8px;
+	opacity: 0.8;
+	font-size: 12px;
+}
+
+
+.workspace-block[data-type="IF"] {
+	border: 2px solid #000000;
+}
