@@ -13,10 +13,12 @@ function enableInnerDrop(container) {
 
 	container.addEventListener("dragover", (e) => {
 		e.preventDefault();
+		e.stopPropagation();
 	});
 
 	container.addEventListener("drop", (e) => {
 		e.preventDefault();
+		e.stopPropagation();
 
 		const mode = e.dataTransfer.getData("mode");
 
@@ -55,6 +57,8 @@ workspace.addEventListener("dragover", (e) => {
 // ловим drop даже если отпустили над блоком/инпутом
 workspace.addEventListener("drop", (e) => {
 	e.preventDefault();
+	// если бросили внутрь вложенной зоны (IF/ELSE/WHILE), то пусть обработает она
+	if (e.target && e.target.closest && e.target.closest(".droppable")) return;
 
 	const mode = e.dataTransfer.getData("mode");
 
@@ -122,7 +126,7 @@ function createWorkspaceBlock(type) {
 	deleteBtn.textContent = "🗑";
 	deleteBtn.classList.add("delete-btn");
 
-	
+
 	if (type === "new_value") {
 		newBlock.innerHTML = `let <input class="block-input" placeholder="название переменной">`;
 	}
@@ -426,9 +430,9 @@ class RNP {
 			}
 			else {
 				while (stack.length != 0 && stack.at(-1) != '('
-					&& (this.ops_priority[stack.at(-1)] > this.ops_priority[token]
-					|| (this.ops_priority[stack.at(-1)] === this.ops_priority[token] 
-					&& this.isLeftAssociative(token)))) {
+				&& (this.ops_priority[stack.at(-1)] > this.ops_priority[token]
+					|| (this.ops_priority[stack.at(-1)] === this.ops_priority[token]
+						&& this.isLeftAssociative(token)))) {
 					queue.push(stack.pop());
 				}
 
