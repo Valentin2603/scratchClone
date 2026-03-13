@@ -213,7 +213,6 @@ body {
     border: 2px solid #000000;
 }
 
-/* --- Responsive / fix block breaking on small screens --- */
 .workspace-block{
     flex-wrap: wrap;
     justify-content: flex-start;
