@@ -128,15 +128,15 @@ function createWorkspaceBlock(type) {
 
 
 	if (type === "new_value") {
-		newBlock.innerHTML = `let <input type = text class="block-input" placeholder="название переменной">`;
+		newBlock.innerHTML = `let <input type = "text" class="block-input" placeholder="название переменной">`;
 	}
 	else if (type === "assign") {
-		newBlock.innerHTML = `<input type = text class="block-input" placeholder="переменная"> = <input class="block-input" placeholder="значение">`;
+		newBlock.innerHTML = `<input type = "text" class="block-input" placeholder="переменная"> = <input type = "text" class="block-input" placeholder="значение">`;
 	}
 	else if (type === "IF") {
 		newBlock.innerHTML = `
 			<div class="if-header">
-				IF <input type = text class="block-input" placeholder="условие (пример: x > 0)">
+				IF <input type = "text" class="block-input" placeholder="условие (пример: x > 0)">
 			</div>
 			<div class="if-body droppable"></div>
 			<div class="else-header">ELSE</div>
