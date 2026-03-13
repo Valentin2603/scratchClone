@@ -128,15 +128,15 @@ function createWorkspaceBlock(type) {
 
 
 	if (type === "new_value") {
-		newBlock.innerHTML = `let <input class="block-input" placeholder="название переменной">`;
+		newBlock.innerHTML = `let <input type = text class="block-input" placeholder="название переменной">`;
 	}
 	else if (type === "assign") {
-		newBlock.innerHTML = `<input class="block-input" placeholder="переменная"> = <input class="block-input" placeholder="значение">`;
+		newBlock.innerHTML = `<input type = text class="block-input" placeholder="переменная"> = <input class="block-input" placeholder="значение">`;
 	}
 	else if (type === "IF") {
 		newBlock.innerHTML = `
 			<div class="if-header">
-				IF <input class="block-input" placeholder="условие (пример: x > 0)">
+				IF <input type = text class="block-input" placeholder="условие (пример: x > 0)">
 			</div>
 			<div class="if-body droppable"></div>
 			<div class="else-header">ELSE</div>
@@ -408,7 +408,7 @@ class RNP {
 
 		for (let i = 0; i < tokens.length; ++i) {
 			let token = tokens[i];
-			if (token == '-' && (i == 0 || (this.isOperator(tokens[i - 1]) || tokens[i -  1] === '('))) {
+			if (token === '-' && (i == 0 || (this.isOperator(tokens[i - 1]) || tokens[i -  1] === '('))) {
 				token = 'u-';
 			}
 			if (!(this.isOperator(token) || token === ')' || token === '(')) {
@@ -429,7 +429,7 @@ class RNP {
 				stack.pop();
 			}
 			else {
-				while (stack.length != 0 && stack.at(-1) != '('
+				while (stack.length != 0 && stack.at(-1) !== '('
 				&& (this.ops_priority[stack.at(-1)] > this.ops_priority[token]
 					|| (this.ops_priority[stack.at(-1)] === this.ops_priority[token]
 						&& this.isLeftAssociative(token)))) {
@@ -439,7 +439,7 @@ class RNP {
 				stack.push(token);
 			}
 		}
-		while (stack.length != 0) {
+		while (stack.length !== 0) {
 			if (stack.at(-1) === '(') {
 				console.log('error');
 				return;
@@ -477,7 +477,7 @@ class RNP {
 				buffer += char;
 			}
 			else if (this.isOperator(char) || char == '(' || char == ')') {
-				if (buffer != '') {
+				if (buffer !== '') {
 					tokens.push(buffer);
 					buffer = '';
 				}
@@ -488,7 +488,7 @@ class RNP {
 				return;
 			}
 		}
-		if (buffer != '') {
+		if (buffer !== '') {
 			tokens.push(buffer);
 			buffer = '';
 		}
