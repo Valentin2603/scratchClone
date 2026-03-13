@@ -16,6 +16,20 @@ blocks.forEach (block => {
     
         workspace.appendChild(newBlock);
 
+        newBlock.addEventListener("click", function(e) {
+
+            console.log("Клик по блоку в окне действий");
+            newBlock.remove();
+
+            for (let i = 0; i<workspaceBlocks.length();++i){
+                if (workspaceBlocks[i].element === newBlock){
+                    workspaceBlocks.splice(i,1);
+                    break;
+                }
+            }
+            
+        })
+
         workspaceBlocks.push({
             type: newBlock.dataset.type,
             element: newBlock
@@ -25,3 +39,4 @@ blocks.forEach (block => {
         
     })
 })
+
