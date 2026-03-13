@@ -26,31 +26,31 @@ body {
 }
 
 .workspace-block{
-	background:#334155;
-	padding:10px;
-	border-radius:12px;
-	margin-bottom:10px;
-	display:flex;
-	justify-content:space-between;
-	align-items:center;
-	gap:10px;
+    background:#334155;
+    padding:10px;
+    border-radius:12px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
 }
 
 .block-input{
-	background:#111827;
-	border:1px solid rgba(255,255,255,0.2);
-	color:white;
-	border-radius:8px;
-	padding:6px 8px;
-	outline:none;
-	min-width:120px;
+    background:#111827;
+    border:1px solid rgba(255,255,255,0.2);
+    color:white;
+    border-radius:8px;
+    padding:6px 8px;
+    outline:none;
+    min-width:120px;
 }
 
 .delete-btn{
-	background:transparent;
-	border:none;
-	cursor:pointer;
-	font-size:18px;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    font-size:18px;
 }
 .head {
     text-align: center;
@@ -191,25 +191,63 @@ body {
 
 
 .if-body .workspace-block {
-	margin-left: 10px;
+    margin-left: 20px;
 }
 
 .if-body, .else-body {
-	min-height: 10px;
-    padding-left: 70px;
-    padding-top: 40px;
-	border-radius: 10px;
-	background: rgba(0,0,0,0.15);
-	margin-top: 4px;
+    min-height: 20px;
+    padding: 8px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.15);
+    margin-top: 8px;
 }
 
 .else-header {
-	margin-top: 8px;
-	opacity: 0.8;
-	font-size: 12px;
+    margin-top: 8px;
+    opacity: 0.8;
+    font-size: 12px;
 }
 
 
 .workspace-block[data-type="IF"] {
-	border: 2px solid #000000;
+    border: 2px solid #000000;
+}
+
+/* --- Responsive / fix block breaking on small screens --- */
+.workspace-block{
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.workspace-block .block-input{
+    flex: 1 1 220px;
+    min-width: 180px;
+}
+
+.workspace-block[data-type="IF"],
+.workspace-block[data-type="WHILE"]{
+    display: block;
+}
+
+.workspace-block[data-type="IF"] .if-header,
+.workspace-block[data-type="WHILE"] .while-header{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 900px){
+    .container{
+        flex-direction: column;
+        height: auto;
+    }
+    .variants{
+        width: 100%;
+    }
+    .pole-raboti{
+        width: 100%;
+        min-height: 45vh;
+    }
 }
