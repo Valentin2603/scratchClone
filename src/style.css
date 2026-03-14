@@ -213,7 +213,6 @@ body {
     border: 2px solid #000000;
 }
 
-/* --- Responsive / fix block breaking on small screens --- */
 .workspace-block{
     flex-wrap: wrap;
     justify-content: flex-start;
@@ -250,4 +249,21 @@ body {
         width: 100%;
         min-height: 45vh;
     }
+}
+
+
+.while-body {
+    min-height: 20px;
+    padding: 8px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.15);
+    margin-top: 8px;
+}
+
+.while-body .workspace-block {
+    margin-left: 20px;
+}
+
+.workspace-block[data-type="WHILE"] {
+    border: 2px solid #000000;
 }
