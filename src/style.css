@@ -25,33 +25,34 @@ body {
     border-radius: 50%;
 }
 
-.workspace-block{
-    background:#334155;
-    padding:10px;
-    border-radius:12px;
-    margin-bottom:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
+.workspace-block {
+    background: #334155;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
-.block-input{
-    background:#111827;
-    border:1px solid rgba(255,255,255,0.2);
-    color:white;
-    border-radius:8px;
-    padding:6px 8px;
-    outline:none;
-    min-width:120px;
+.block-input {
+    background: #111827;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 8px;
+    padding: 6px 8px;
+    outline: none;
+    min-width: 120px;
 }
 
-.delete-btn{
-    background:transparent;
-    border:none;
-    cursor:pointer;
-    font-size:18px;
+.delete-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
 }
+
 .head {
     text-align: center;
     padding: 15px 0;
@@ -123,6 +124,7 @@ body {
     padding: 20px;
     overflow-y: auto;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    min-width: 450px
 }
 
 .window-deystviy {
@@ -198,7 +200,7 @@ body {
     min-height: 20px;
     padding: 8px;
     border-radius: 10px;
-    background: rgba(0,0,0,0.15);
+    background: rgba(0, 0, 0, 0.15);
     margin-top: 8px;
 }
 
@@ -213,39 +215,41 @@ body {
     border: 2px solid #000000;
 }
 
-.workspace-block{
+.workspace-block {
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: flex-start;
 }
 
-.workspace-block .block-input{
+.workspace-block .block-input {
     flex: 1 1 220px;
     min-width: 180px;
 }
 
 .workspace-block[data-type="IF"],
-.workspace-block[data-type="WHILE"]{
+.workspace-block[data-type="WHILE"] {
     display: block;
 }
 
 .workspace-block[data-type="IF"] .if-header,
-.workspace-block[data-type="WHILE"] .while-header{
+.workspace-block[data-type="WHILE"] .while-header {
     display: flex;
     gap: 10px;
     align-items: center;
     flex-wrap: wrap;
 }
 
-@media (max-width: 900px){
-    .container{
+@media (max-width: 900px) {
+    .container {
         flex-direction: column;
         height: auto;
     }
-    .variants{
+
+    .variants {
         width: 100%;
     }
-    .pole-raboti{
+
+    .pole-raboti {
         width: 100%;
         min-height: 45vh;
     }
@@ -256,7 +260,7 @@ body {
     min-height: 20px;
     padding: 8px;
     border-radius: 10px;
-    background: rgba(0,0,0,0.15);
+    background: rgba(0, 0, 0, 0.15);
     margin-top: 8px;
 }
 
