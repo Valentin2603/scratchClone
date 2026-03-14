@@ -122,6 +122,16 @@ function createWorkspaceBlock(type) {
         enableInnerDrop(newBlock.querySelector('.if-body'));
         enableInnerDrop(newBlock.querySelector('.else-body'));
     }
+    else if (type === 'WHILE') {
+        newBlock.innerHTML = `
+            <div class="while-header">
+                WHILE <input class="block-input" placeholder="условие (пример: x < 10)">
+            </div>
+            <div class="while-body droppable"></div>
+        `;
+
+        enableInnerDrop(newBlock.querySelector('.while-body'));
+    }
 
     newBlock.appendChild(deleteBtn);
 
@@ -165,6 +175,11 @@ function createWorkspaceBlock(type) {
             newBlock.dataset.condition = inputs[0].value;
         });
     }
+    else if (type === 'WHILE') {
+        inputs[0].addEventListener('input', () => {
+            newBlock.dataset.condition = inputs[0].value;
+        });
+    }
 
     return newBlock;
 }
@@ -194,6 +209,12 @@ function readBlock(b) {
         const elseBlocks = elseBody ? elseBody.querySelectorAll(':scope > .workspace-block') : [];
         obj.then = Array.from(ifBlocks).map(readBlock);
         obj.else = Array.from(elseBlocks).map(readBlock);
+    }
+    else if (b.dataset.type === 'WHILE') {
+        obj.data.condition = b.dataset.condition || '';
+        const whileBody = b.querySelector('.while-body');
+        const whileBlocks = whileBody ? whileBody.querySelectorAll(':scope > .workspace-block') : [];
+        obj.body = Array.from(whileBlocks).map(readBlock);
     }
 
     return obj;
@@ -250,6 +271,9 @@ class Interpreter {
             case 'IF':
                 this.execIf(block);
                 break;
+            case 'WHILE':
+                this.execWhile(block);
+                break;
             default:
                 throw new Error('Неизвестный блок: ' + block.type);
         }
@@ -271,34 +295,73 @@ class Interpreter {
         }
     }
 
+    parseArrayAccess(text) {
+        const source = String(text || '').trim();
+        const match = source.match(/^([A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*)\[(.+)\]$/);
+
+        if (!match) return null;
+
+        return {
+            arrayName: match[1],
+            indexExpr: match[2].trim()
+        };
+    }
+
     resolveValue(token) {
-        const valueToken = String(token || '').trim();
-        const arrMatch = valueToken.match(/^([A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*)\[(\d+)\]$/);
+        token = token.trim();
 
-        if (arrMatch) {
-            const arrName = arrMatch[1];
-            const index = parseInt(arrMatch[2], 10);
+        const lengthMatch = token.match(/^length\(([A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*)\)$/);
+        if (lengthMatch) {
+            const arrayName = lengthMatch[1];
 
-            if (!this.variables.has(arrName)) {
-                throw new Error(`Массив ${arrName} не объявлен`);
+            if (!this.variables.has(arrayName)) {
+                throw new Error(`Массив ${arrayName} не объявлен`);
             }
 
-            const arr = this.variables.get(arrName);
+            const arr = this.variables.get(arrayName);
+
             if (!Array.isArray(arr)) {
-                throw new Error(`${arrName} не является массивом`);
+                throw new Error(`${arrayName} не является массивом`);
             }
+
+            return arr.length;
+        }
+
+        const arrAccess = this.parseArrayAccess(token);
+
+        // arr[...]
+        if (arrAccess) {
+            const { arrayName, indexExpr } = arrAccess;
+
+            if (!this.variables.has(arrayName)) {
+                throw new Error(`Массив ${arrayName} не объявлен`);
+            }
+
+            const arr = this.variables.get(arrayName);
+
+            if (!Array.isArray(arr)) {
+                throw new Error(`${arrayName} не является массивом`);
+            }
+
+            const index = RNP.calculate(indexExpr, n => this.resolveValue(n));
+
+            if (!Number.isInteger(index)) {
+                throw new Error(`Индекс массива ${arrayName} должен быть целым числом`);
+            }
+
             if (index < 0 || index >= arr.length) {
-                throw new Error(`Индекс ${index} вне границ массива ${arrName}`);
+                throw new Error(`Индекс ${index} вне границ массива ${arrayName}`);
             }
 
             return arr[index];
         }
 
-        if (!this.variables.has(valueToken)) {
-            throw new Error(`Переменная ${valueToken} не объявлена`);
+        // обычная переменная
+        if (!this.variables.has(token)) {
+            throw new Error(`Переменная ${token} не объявлена`);
         }
 
-        return this.variables.get(valueToken);
+        return this.variables.get(token);
     }
 
     splitArrayItems(source) {
@@ -345,11 +408,15 @@ class Interpreter {
     assign(name, expr) {
         const target = String(name || '').trim();
         const source = String(expr || '').trim();
-        const arrTargetMatch = target.match(/^([A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*)\[(\d+)\]$/);
+        const arrTarget = this.parseArrayAccess(target);
 
-        if (arrTargetMatch) {
-            const arrName = arrTargetMatch[1];
-            const index = parseInt(arrTargetMatch[2], 10);
+        if (arrTarget) {
+            const arrName = arrTarget.arrayName;
+            const index = this.evaluateExpression(arrTarget.indexExpr);
+
+            if (!Number.isInteger(index)) {
+                throw new Error(`Индекс массива ${arrName} должен быть целым числом`);
+            }
 
             if (!this.variables.has(arrName)) {
                 throw new Error(`Массив ${arrName} не объявлен`);
@@ -388,6 +455,20 @@ class Interpreter {
             if (block.then) this.run(block.then);
         } else {
             if (block.else) this.run(block.else);
+        }
+    }
+
+    execWhile(block) {
+        const cond = String(block.data.condition || '').trim();
+        if (cond.length === 0) throw new Error('Пустое условие WHILE');
+
+        let guard = 0;
+        while (this.evalCondition(cond)) {
+            if (block.body) this.run(block.body);
+            guard += 1;
+            if (guard > 10000) {
+                throw new Error('Слишком много итераций в WHILE');
+            }
         }
     }
 
@@ -434,61 +515,167 @@ class RNP {
         '^': 5,
     }
 
+    parseArrayAccess(text) {
+        text = text.trim();
+
+        const match = text.match(/^([A-Za-zА-Яа-яЁё_][A-Za-zА-Яа-яЁё_0-9]*)\[(.+)\]$/);
+
+        if (!match) return null;
+
+        return {
+            arrayName: match[1],
+            indexExpr: match[2].trim()
+        };
+    }
+
     static calculate(expression, resolver) {
-        const tokens = this.shunting_yard(this.tokenize(expression));
+
+        const tokens = RNP.tokenize(expression);
+
+        const rpn = RNP.shunting_yard(tokens);
+
         const stack = [];
 
-        for (const token of tokens) {
-            if (!this.isOperator(token)) {
-                if (/^-?\d+$/.test(token)) {
-                    stack.push(parseInt(token, 10));
-                }
-                else {
-                    if (!resolver) throw new Error('Неизвестный токен: ' + token);
-                    const v = resolver(token);
-                    if (v === undefined) throw new Error('Переменная не объявлена: ' + token);
-                    stack.push(parseInt(v, 10));
-                }
-            }
-            else {
-                const a = stack.pop();
-                const b = (token === 'u-') ? 0 : stack.pop();
+        for (const token of rpn) {
 
-                if (a === undefined || (token !== 'u-' && b === undefined)) {
-                    throw new Error('Некорректное выражение: ' + expression);
-                }
+            if (!isNaN(token)) {
+                stack.push(Number(token));
+                continue;
+            }
+
+            if (token === 'u-') {
+                const value = stack.pop();
+                stack.push(-value);
+                continue;
+            }
+
+            if (["+", "-", "*", "/", "%", "^"].includes(token)) {
+
+                const b = stack.pop();
+                const a = stack.pop();
 
                 switch (token) {
-                    case '+':
-                        stack.push(a + b);
+                    case "+": stack.push(a + b); break;
+                    case "-": stack.push(a - b); break;
+                    case "*": stack.push(a * b); break;
+                    case "/":
+                        if (b === 0) throw new Error("Деление на ноль");
+                        stack.push(Math.floor(a / b));
                         break;
-                    case '-':
-                        stack.push(b - a);
-                        break;
-                    case '*':
-                        stack.push(b * a);
-                        break;
-                    case '/':
-                        stack.push(parseInt(b / a, 10));
-                        break;
-                    case '^':
-                        stack.push(b ** a);
-                        break;
-                    case '%':
-                        stack.push(b % a);
-                        break;
-                    case 'u-':
-                        stack.push(-a);
-                        break;
+                    case "%": stack.push(a % b); break;
+                    case "^": stack.push(a ** b); break;
                 }
+
+                continue;
             }
+
+            // переменная
+            stack.push(resolver(token));
         }
 
-        const result = stack.pop();
-        if (stack.length !== 0 || result === undefined || Number.isNaN(result)) {
-            throw new Error('Некорректное выражение: ' + expression);
+        if (stack.length !== 1)
+            throw new Error("Некорректное выражение");
+
+        return stack[0];
+    }
+
+    static tokenize(expression) {
+        const tokens = [];
+        const source = String(expression || '');
+        let i = 0;
+
+        while (i < source.length) {
+            const char = source[i];
+
+            if (/\s/.test(char)) {
+                i += 1;
+                continue;
+            }
+
+            if (this.isDigit(char)) {
+                let value = char;
+                i += 1;
+
+                while (i < source.length && this.isDigit(source[i])) {
+                    value += source[i];
+                    i += 1;
+                }
+
+                tokens.push(value);
+                continue;
+            }
+
+            if (this.isLetter(char) || char === '_') {
+                let value = char;
+                i += 1;
+
+                while (i < source.length && this.isVariableSymbol(source[i])) {
+                    value += source[i];
+                    i += 1;
+                }
+
+                if (i < source.length && source[i] === '(') {
+                    let depth = 0;
+                    let suffix = '';
+
+                    while (i < source.length) {
+                        const c = source[i];
+                        suffix += c;
+
+                        if (c === '(') depth += 1;
+                        if (c === ')') {
+                            depth -= 1;
+                            if (depth === 0) {
+                                i += 1;
+                                break;
+                            }
+                        }
+
+                        i += 1;
+                    }
+
+                    value += suffix;
+                    tokens.push(value);
+                    continue;
+                }
+
+                if (i < source.length && source[i] === '[') {
+                    let depth = 0;
+                    let suffix = '';
+
+                    while (i < source.length) {
+                        const c = source[i];
+                        suffix += c;
+
+                        if (c === '[') depth += 1;
+                        if (c === ']') {
+                            depth -= 1;
+                            if (depth === 0) {
+                                i += 1;
+                                break;
+                            }
+                        }
+
+                        i += 1;
+                    }
+
+                    value += suffix;
+                }
+
+                tokens.push(value);
+                continue;
+            }
+
+            if (['+', '-', '*', '/', '%', '^', '(', ')'].includes(char)) {
+                tokens.push(char);
+                i += 1;
+                continue;
+            }
+
+            throw new Error('Неизвестный символ в выражении: ' + char);
         }
-        return result;
+
+        return tokens;
     }
 
     static shunting_yard(tokens) {
@@ -539,50 +726,85 @@ class RNP {
         return queue;
     }
 
-	static tokenize(exp) {
-		let tokens = [];
+    assign(name, expr) {
+        name = name.trim();
+        expr = expr.trim();
 
-		let buffer = '';
-		let buffer_type = '';
+        const arrTarget = this.parseArrayAccess(name);
 
-		for (const char of exp) {
-			if (char === ' ') continue;
-			if (buffer.length === 0) {
-				if (this.isDigit(char)) {
-					buffer_type = 'number';
-				}
-				else if (this.isLetter(char)) {
-					buffer_type = 'variable';
-				}
-			}
-			if (this.isDigit(char)) {
-				buffer += char;
-			}
-			else if (this.isVariableSymbol(char)) {
-				if (buffer_type == 'number') {
-					console.log('error');
-					return;
-				}
-				buffer += char;
-			}
-			else if (this.isOperator(char) || char == '(' || char == ')') {
-				if (buffer != '') {
-					tokens.push(buffer);
-					buffer = '';
-				}
-				tokens.push(char);
-			}
-			else {
-				console.log('error');
-				return;
-			}
-		}
-		if (buffer != '') {
-			tokens.push(buffer);
-			buffer = '';
-		}
+        // запись в элемент массива: arr[i] = ...
+        if (arrTarget) {
+            const { arrayName, indexExpr } = arrTarget;
 
-        return tokens;
+            if (!this.variables.has(arrayName)) {
+                throw new Error(`Массив ${arrayName} не объявлен`);
+            }
+
+            const arr = this.variables.get(arrayName);
+
+            if (!Array.isArray(arr)) {
+                throw new Error(`${arrayName} не является массивом`);
+            }
+
+            const index = RNP.calculate(indexExpr, n => this.resolveValue(n));
+
+            if (!Number.isInteger(index)) {
+                throw new Error(`Индекс массива ${arrayName} должен быть целым числом`);
+            }
+
+            if (index < 0 || index >= arr.length) {
+                throw new Error(`Индекс ${index} вне границ массива ${arrayName}`);
+            }
+
+            const value = RNP.calculate(expr, n => this.resolveValue(n));
+            arr[index] = value;
+            return;
+        }
+
+        // обычная переменная
+        if (!this.variables.has(name)) {
+            throw new Error(`Переменная ${name} не объявлена`);
+        }
+
+        // создание массива: arr = [1, 2, x+3]
+        if (expr.startsWith("[") && expr.endsWith("]")) {
+            const inside = expr.slice(1, -1).trim();
+
+            if (inside === "") {
+                this.variables.set(name, []);
+                return;
+            }
+
+            const parts = [];
+            let current = "";
+            let bracketDepth = 0;
+
+            for (let i = 0; i < inside.length; i++) {
+                const ch = inside[i];
+
+                if (ch === "[" ) bracketDepth++;
+                if (ch === "]" ) bracketDepth--;
+
+                if (ch === "," && bracketDepth === 0) {
+                    parts.push(current.trim());
+                    current = "";
+                } else {
+                    current += ch;
+                }
+            }
+
+            if (current.trim() !== "") {
+                parts.push(current.trim());
+            }
+
+            const values = parts.map(part => RNP.calculate(part, n => this.resolveValue(n)));
+            this.variables.set(name, values);
+            return;
+        }
+
+        // обычное выражение
+        const value = RNP.calculate(expr, n => this.resolveValue(n));
+        this.variables.set(name, value);
     }
 
     static isLeftAssociative(token) {

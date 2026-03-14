@@ -250,3 +250,20 @@ body {
         min-height: 45vh;
     }
 }
+
+
+.while-body {
+    min-height: 20px;
+    padding: 8px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.15);
+    margin-top: 8px;
+}
+
+.while-body .workspace-block {
+    margin-left: 20px;
+}
+
+.workspace-block[data-type="WHILE"] {
+    border: 2px solid #000000;
+}
